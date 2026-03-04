@@ -54,6 +54,7 @@ int	picoshell(char *cmds[])
 	int	res;
 	pid_t	pid;
 	int	status;
+	int	start;
 
 	i = 0;
 	in_fd = 0;
@@ -63,6 +64,7 @@ int	picoshell(char *cmds[])
 	{
 		while (cmds[i] && !ft_strcmp(cmds[i], "|"))
 			i++;
+		start = i;
 		if (cmds[i + 1]) //nao é o último
 		{
 			if (pipe(fds) == -1)
@@ -86,6 +88,11 @@ int	picoshell(char *cmds[])
 		}
 		if (pid == 0) //filho
 		{
+			i = start;
+			while (cmds[i] && ft_strcmp("|", cmds[i]))
+				i++;
+			if (cmds[i])
+				cmds[i] = NULL;
 			if (in_fd != 0)
 			{
 				if (dup2(in_fd, STDIN_FILENO) == -1)
@@ -99,7 +106,7 @@ int	picoshell(char *cmds[])
 				close(fds[0]);
 				close(fds[1]);
 			}
-			execvp(&cmds[i][0], &cmds[i]);
+			execvp(cmds[start], cmds + start);
 			exit(1);
 		}
 		else //pai
