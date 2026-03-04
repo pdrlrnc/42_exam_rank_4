@@ -18,6 +18,7 @@
 
 //prototypes
 int	picoshell(char *cmds[]);
+int	ft_strcmp(char *str1, char *str2);
 
 int	main(int argc, char **argv)
 {
@@ -27,6 +28,22 @@ int	main(int argc, char **argv)
 	if (argc == 1)
 		return (0);
 	return (picoshell(argv + 1));
+}
+
+int	ft_strcmp(char *str1, char *str2)
+{
+	int	i;
+
+	if (!str1 || !str2)
+		return (1);
+	i = 0;
+	while (*(str1 + i) && *(str2 + i))
+	{
+		if (*(str1 + i) != *(str2 + i))
+			return (*(str1 + i) - *(str2 + i));
+		i++;
+	}
+	return (*(str1 + i) - *(str2 + i));
 }
 
 int	picoshell(char *cmds[])
@@ -44,6 +61,8 @@ int	picoshell(char *cmds[])
 
 	while (cmds[i])
 	{
+		while (cmds[i] && !ft_strcmp(cmds[i], "|"))
+			i++;
 		if (cmds[i + 1]) //nao é o último
 		{
 			if (pipe(fds) == -1)

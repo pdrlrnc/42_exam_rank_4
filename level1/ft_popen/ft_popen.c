@@ -20,6 +20,7 @@ int	ft_popen(const char *file, char *const argv[], char type);
 char	*get_next_line(int fd);
 char	*ft_strchr(const char *s, int c);
 size_t	ft_strlen(const char *str);
+int	ft_strcmp(char *str1, char *str2);
 
 
 int	ft_popen(const char *file, char *const argv[], char type)
@@ -78,6 +79,22 @@ int	ft_popen(const char *file, char *const argv[], char type)
 
 	}
 	
+}
+
+int	ft_strcmp(char *str1, char *str2)
+{
+	int	i;
+
+	if (!str1 || !str2)
+		return (1);
+	i = 0;
+	while (*(str1 + i) && *(str2 + i))
+	{
+		if (*(str1 + i) != *(str2 + i))
+			return (*(str1 + i) - *(str2 + i));
+		i++;
+	}
+	return (*(str1 + i) - *(str2 + i));
 }
 
 int	main() {
