@@ -1,21 +1,19 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   vbc.c                                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: pedde-so <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/26 12:51:57 by pedde-so          #+#    #+#             */
-/*   Updated: 2026/03/26 12:51:58 by pedde-so         ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   vbc.c											  :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: pedde-so <marvin@42.fr>					+#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2026/03/26 16:18:34 by pedde-so		  #+#	#+#			 */
+/*   Updated: 2026/03/26 16:18:35 by pedde-so		 ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <malloc.h> // change this to <stdlib.h>
 #include <ctype.h>
 
-
-/*structs*/
 typedef struct node {
 	enum {
 		ADD,
@@ -27,12 +25,12 @@ typedef struct node {
 	struct node *r;
 }   node;
 
-/*prototypes*/
-static node *parse_add(char **s);
-static node *parse_mult(char **s);
-static node *parse_value(char **s);
+/**prototypes**/
+node	*parse_add(char **s);
+node	*parse_mult(char **s);
+node	*parse_value(char **s);
 
-node    *new_node(node n)
+node	*new_node(node n)
 {
 	node *ret = calloc(1, sizeof(n));
 	if (!ret)
@@ -41,7 +39,7 @@ node    *new_node(node n)
 	return (ret);
 }
 
-void    destroy_tree(node *n)
+void	destroy_tree(node *n)
 {
 	if (!n)
 		return ;
@@ -53,7 +51,7 @@ void    destroy_tree(node *n)
 	free(n);
 }
 
-void    unexpected(char c)
+void	unexpected(char c)
 {
 	if (c)
 		printf("Unexpected token '%c'\n", c);
@@ -81,30 +79,30 @@ int expect(char **s, char c)
 
 node	*parse_value(char **s)
 {
-	if (!(*s) || (!isdigit(**s) && **s != '('))
+	node	*new;
+
+	if (!*s || (!isdigit(**s) && **s != '('))
 	{
 		unexpected(**s);
 		return (NULL);
 	}
-	node *new;
-
 	if (accept(s, '('))
 	{
 		new = parse_add(s);
 		if (!new)
-			return (NULL);
-		if (expect(s, ')'))
+			return (new);
+		if (!expect(s, ')'))
 		{
 			destroy_tree(new);
 			return (NULL);
 		}
 		return (new);
 	}
-	new = malloc(sizeof(new));
+	new = malloc(sizeof(node));
 	if (!new)
 		return (NULL);
 	new->type = VAL;
-	new->val = (int)(**s - '0');
+	new->val = (int)**s - '0';
 	new->l = NULL;
 	new->r = NULL;
 	(*s)++;
@@ -113,22 +111,22 @@ node	*parse_value(char **s)
 
 node	*parse_mult(char **s)
 {
-	node *left = NULL;
-	node *right = NULL;
-	node *new;
+	node	*left = NULL;
+	node	*right = NULL;
+	node	*new;
 
 	left = parse_value(s);
 	if (!left)
 		return (NULL);
 	while (accept(s, '*'))
 	{
-		right = parse_value(s);
+		right = parse_mult(s);
 		if (!right)
 		{
 			destroy_tree(left);
 			return (NULL);
 		}
-		new = malloc(sizeof(new));
+		new = malloc(sizeof(node));
 		if (!new)
 		{
 			destroy_tree(left);
@@ -146,22 +144,22 @@ node	*parse_mult(char **s)
 
 node	*parse_add(char **s)
 {
-	node *left = NULL;
-	node *right = NULL;
-	node *new;
+	node	*left = NULL;
+	node	*right = NULL;
+	node	*new;
 
 	left = parse_mult(s);
 	if (!left)
 		return (NULL);
 	while (accept(s, '+'))
 	{
-		right = parse_mult(s);
+		right = parse_add(s);
 		if (!right)
 		{
 			destroy_tree(left);
 			return (NULL);
 		}
-		new = malloc(sizeof(new));
+		new = malloc(sizeof(node));
 		if (!new)
 		{
 			destroy_tree(left);
@@ -177,20 +175,19 @@ node	*parse_add(char **s)
 	return (left);
 }
 
-node    *parse_expr(char *s)
+node	*parse_expr(char *s)
 {
 	if (!s)
 		return (NULL);
-	node *ret = parse_add(&s);
+	node	*ret = parse_add(&s);
 	if (!ret)
 		return (NULL);
-	if (*s)
+	if (*s) 
 	{
 		unexpected(*s);
 		destroy_tree(ret);
 		return (NULL);
 	}
-
 	return (ret);
 }
 
@@ -204,6 +201,8 @@ int eval_tree(node *tree)
 			return (eval_tree(tree->l) * eval_tree(tree->r));
 		case VAL:
 			return (tree->val);
+		default:
+			return (0);
 	}
 }
 
