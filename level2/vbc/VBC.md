@@ -1,23 +1,22 @@
-Assignment name  : vbc
-Expected files   : *.c *.h
-Allowed functions: malloc, calloc, realloc, free, printf, isdigit, write
---------------------------------------------------------------------------------
+**Assignement name:** `vbc`
 
-Write a program that will print the result of a math expression given as
-argument.
-You must handle the operations + * and the parenthesis.
-You don't have to handle whitespaces in the expression.
-All the values in the expression will be between 0 and 9 included.
-In case of unexpected symbol or inappropriate parenthesis, you will
-print "Unexpected token '%c'
-" and exit with the code 1 (if the
-symbol is the end of input you will print: "Unexpected end of input
-").
-In case of a syscall failure you will just exit with the code 1.
+**Expected files:** `*.c` `*.h`
 
-You will find in this directory the beginning of the code you need to write.
+**Allowed functions:** `malloc`, `calloc`, `realloc`, `free`, `printf`, `isdigit`, `write`
 
-For example this should work:
+---
+
+Write a program that will print the result of a math expression given as argument.
+
+- You must handle the operations `+`, `*` and the parenthesis.
+- You don't have to handle whitespaces in the expression.
+- All the values in the expression will be between `0` and `9` included.
+- In case of unexpected symbol or inappropriate parenthesis, you will print `"Unexpected token '%c'\n"` and exit with the code `1` (if the symbol is the end of input you will print: `"Unexpected end of input\n"`).
+- In case of a syscall failure you will just exit with the code `1`.
+- You will find in this directory the beginning of the code you need to write.
+
+## Examples
+```sh
 $> ./vbc '1' | cat -e
 1$
 $> ./vbc '2+3' | cat -e
@@ -48,4 +47,4 @@ $> ./vbc '((6*6+7+5+8)*(1+0+4*8+7)+2)+4*(1+2)' | cat -e
 2254$
 $> ./vbc '((1+3)*12+(3*(2+6))' | cat -e
 Unexpected token '2'$
-
+```
